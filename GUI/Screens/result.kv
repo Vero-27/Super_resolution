@@ -1,0 +1,49 @@
+<ResultScreen>:
+    canvas.before:
+        Color:
+            rgba: COLOR_BACKGROUND
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    FloatLayout:
+        padding: 20
+
+        Image:
+            source: root.output_image_path
+            allow_stretch: True
+            keep_ratio: True
+            size_hint: 1, 1
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        AnchorLayout:
+            anchor_x: 'left'
+            anchor_y: 'top'
+            padding: 20
+            SecondaryButton:
+                text: 'Retour'
+                size_hint_x: None
+                width: 120
+                on_release: root.back_to_select()
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'bottom'
+            padding: 20
+
+            Button:
+                text: "Téléchargé !" if root.download_complete else "Télécharger"
+                disabled: root.download_complete
+                on_release: root.download_image()
+                size_hint: 0.9, None
+                height: 55
+                font_size: '18sp'
+                color: COLOR_TEXT
+                background_color: [0,0,0,0]
+                canvas.before:
+                    Color:
+                        rgba: COLOR_SUCCESS if root.download_complete else (COLOR_ACCENT if self.state == 'normal' else COLOR_ACCENT_DOWN)
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [10,]
