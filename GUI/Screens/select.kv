@@ -1,0 +1,45 @@
+#:import os os
+
+<SelectScreen>:
+    canvas.before:
+        Color:
+            rgba: COLOR_BACKGROUND
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        TitleLabel:
+            text: "Importer une image"
+            size_hint_y: 0.15
+
+        FileDropZone:
+            id: drop_zone
+            size_hint_y: 0.6
+            padding: 20
+            on_release: root.open_native_file_chooser()
+
+            Label:
+                text: '+'
+                font_size: '100sp'
+                color: COLOR_TEXT_SECONDARY
+
+            BodyLabel:
+                text: "Touchez cette zone pour choisir un fichier"
+                height: self.texture_size[1]
+
+        BodyLabel:
+            size_hint_y: 0.1
+            text: os.path.basename(root.selected_path) if root.selected_path else "Aucun fichier sélectionné"
+            color: COLOR_TEXT
+
+        PrimaryButton:
+            text: 'Lancer la Super Résolution'
+            on_release: root.on_process_button_press()
+            disabled: not root.selected_path
+            size_hint_x: 0.9
+            pos_hint: {'center_x': 0.5}

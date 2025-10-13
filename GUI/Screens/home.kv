@@ -1,0 +1,32 @@
+<HomeScreen>:
+    canvas.before:
+        Color:
+            rgba: COLOR_BACKGROUND
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 40
+        spacing: 15
+
+        Widget:
+            size_hint_y: 0.5
+
+        TitleLabel:
+            text: "Super Resolution AI"
+            font_size: '40sp'
+
+        BodyLabel:
+            text: "Améliorez la qualité de vos images grâce à l'intelligence artificielle."
+            padding: [0, 20]
+
+        Widget:
+            size_hint_y: 1.5
+
+        BodyLabel:
+            text: "Touchez l'écran pour commencer"
+            color: COLOR_TEXT_SECONDARY
+            font_size: '14sp'
+            size_hint_y: 0.1
