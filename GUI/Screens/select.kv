@@ -23,14 +23,26 @@
             padding: 20
             on_release: root.open_native_file_chooser()
 
-            Label:
-                text: '+'
-                font_size: '100sp'
-                color: COLOR_TEXT_SECONDARY
+            RelativeLayout:
+                Image:
+                    source: root.selected_path
+                    opacity: 1 if root.selected_path else 0
+                    allow_stretch: True
+                    keep_ratio: True
 
-            BodyLabel:
-                text: "Touchez cette zone pour choisir un fichier"
-                height: self.texture_size[1]
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 15
+                    opacity: 0 if root.selected_path else 1
+
+                    Label:
+                        text: '+'
+                        font_size: '100sp'
+                        color: COLOR_TEXT_SECONDARY
+
+                    BodyLabel:
+                        text: "Touchez cette zone pour choisir un fichier"
+                        height: self.texture_size[1]
 
         BodyLabel:
             size_hint_y: 0.1
