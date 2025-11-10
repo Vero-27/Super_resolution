@@ -1,0 +1,5 @@
+Pour utiliser ce projet sur ordinateur il suffit de lancer le .exe, pour le désinstaller il faut supprimer le .exe.
+
+Pour utiliser ce projet sur telephone, cliquez sur l'apk pour installer le projet. Pour le désinstaller supprimez l'application.
+
+Pour l'utiliser, mettez une image dans l'espace prévu à cet effet, appuyez sur le bouton et récupérez votre image de meilleure qualité.
