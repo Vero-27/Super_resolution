@@ -1,5 +1,7 @@
 # Super_resolution
 
+Pour lancer un entraînement :
+
 installer le data set et glisser les .png dans le dossier '/data/HR' :  https://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip 
 
 Dans un terminal, à la racine du projet, lancer : 
