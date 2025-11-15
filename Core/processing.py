@@ -16,4 +16,3 @@ def run_super_resolution(input_path: str) -> str:
     shutil.copy(input_path, output_path)
 
     return output_path
-
