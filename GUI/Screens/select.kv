@@ -1,6 +1,9 @@
 #:import os os
+#:import utils kivy.utils
 
 <SelectScreen>:
+    id: select_screen_root
+
     canvas.before:
         Color:
             rgba: COLOR_BACKGROUND
@@ -14,32 +17,238 @@
         spacing: 20
 
         TitleLabel:
-            text: "Importer une image"
-            size_hint_y: 0.15
+            text: "Super Résolution"
+            font_size: '28sp'
+            size_hint_y: 0.1
 
         FileDropZone:
             id: drop_zone
-            size_hint_y: 0.6
+            size_hint_y: 0.3
             padding: 20
             on_release: root.open_native_file_chooser()
 
-            Label:
-                text: '+'
-                font_size: '100sp'
-                color: COLOR_TEXT_SECONDARY
+            RelativeLayout:
+                Image:
+                    source: root.image_source_path
+                    opacity: 1 if root.selected_path else 0
+                    allow_stretch: True
+                    keep_ratio: True
 
-            BodyLabel:
-                text: "Touchez cette zone pour choisir un fichier"
-                height: self.texture_size[1]
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 15
+                    opacity: 0 if root.selected_path else 1
 
-        BodyLabel:
-            size_hint_y: 0.1
-            text: os.path.basename(root.selected_path) if root.selected_path else "Aucun fichier sélectionné"
-            color: COLOR_TEXT
+                    Label:
+                        text: '+'
+                        font_size: '100sp'
+                        color: COLOR_TEXT_DARK_SECONDARY
+
+                    BodyLabel:
+                        text: "Touchez cette zone pour choisir un fichier"
+                        color: COLOR_TEXT_DARK_SECONDARY
+                        height: self.texture_size[1]
+
+        Widget:
+            size_hint_y: 0.05
+
+        ScrollView:
+            size_hint_y: None
+            height: dp(270)
+            do_scroll_x: True
+            do_scroll_y: False
+            bar_width: 0
+
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 15
+                padding: [dp(10), dp(5)]
+                size_hint_x: None
+                width: self.minimum_width
+
+                SelectionCard:
+                    size_hint_x: None
+                    width: max(dp(250), (select_screen_root.width - dp(80)) / 3)
+                    model_name: 'ESPCN'
+                    is_selected: root.selected_model == self.model_name
+                    id: card_espcn
+                    on_release: root.set_selected_model(self.model_name)
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+
+                        Label:
+                            text: u'\uE3E7'
+                            font_name: 'MaterialIcons'
+                            font_size: '30sp'
+                            color: COLOR_ACCENT
+                            size_hint_y: 0.2
+                        Label:
+                            text: "RAPIDITÉ"
+                            color: COLOR_ACCENT
+                            font_size: '12sp'
+                            bold: True
+                            size_hint_y: 0.1
+
+                        Label:
+                            text: "ESPCN"
+                            color: COLOR_TEXT
+                            font_size: '18sp'
+                            bold: True
+                            size_hint_y: 0.2
+
+                        Label:
+                            text: "Idéal pour un traitement léger, parfait pour les aperçus."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '12sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            size_hint_y: 0.2
+
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(1)
+                            padding: [dp(20), 0]
+                            canvas.after:
+                                Color:
+                                    rgba: COLOR_BORDER
+                                Rectangle:
+                                    pos: self.x + dp(20), self.y
+                                    size: self.width - dp(40), self.height
+
+                        Label:
+                            text: "Ce modèle utilise une couche 'sub-pixel' pour réorganiser les pixels, le rendant très efficace et très rapide."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '11sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            valign: 'middle'
+                            size_hint_y: 0.4
+
+
+                SelectionCard:
+                    size_hint_x: None
+                    width: max(dp(250), (select_screen_root.width - dp(80)) / 3)
+                    model_name: 'SRCNN'
+                    is_selected: root.selected_model == self.model_name
+                    id: card_srcnn
+                    on_release: root.set_selected_model(self.model_name)
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+
+                        Label:
+                            text: u'\uEB39'
+                            font_name: 'MaterialIcons'
+                            font_size: '30sp'
+                            color: COLOR_ACCENT
+                            size_hint_y: 0.2
+                        Label:
+                            text: "POLYVALENCE"
+                            color: COLOR_ACCENT
+                            font_size: '12sp'
+                            bold: True
+                            size_hint_y: 0.1
+
+                        Label:
+                            text: "SRCNN"
+                            color: COLOR_TEXT
+                            font_size: '18sp'
+                            bold: True
+                            size_hint_y: 0.2
+                        Label:
+                            text: "Le modèle fiable pour une amélioration de base."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '12sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            size_hint_y: 0.2
+
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(1)
+                            padding: [dp(20), 0]
+                            canvas.after:
+                                Color:
+                                    rgba: COLOR_BORDER
+                                Rectangle:
+                                    pos: self.x + dp(20), self.y
+                                    size: self.width - dp(40), self.height
+                        Label:
+                            text: "SRCNN agrandit d'abord l'image (interpolation), puis utilise un CNN pour affiner les détails."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '11sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            valign: 'middle'
+                            size_hint_y: 0.4
+
+
+                SelectionCard:
+                    size_hint_x: None
+                    width: max(dp(250), (select_screen_root.width - dp(80)) / 3)
+                    model_name: 'EDSR'
+                    is_selected: root.selected_model == self.model_name
+                    id: card_edsr
+                    on_release: root.set_selected_model(self.model_name)
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        spacing: 5
+
+                        Label:
+                            text: u'\uE8B6'
+                            font_name: 'MaterialIcons'
+                            font_size: '30sp'
+                            color: COLOR_ACCENT
+                            size_hint_y: 0.2
+                        Label:
+                            text: "PRÉCISION"
+                            color: COLOR_ACCENT
+                            font_size: '12sp'
+                            bold: True
+                            size_hint_y: 0.1
+
+                        Label:
+                            text: "EDSR"
+                            color: COLOR_TEXT
+                            font_size: '18sp'
+                            bold: True
+                            size_hint_y: 0.2
+                        Label:
+                            text: "Maximise la netteté et la reconstruction des textures fines."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '12sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            size_hint_y: 0.2
+
+                        BoxLayout:
+                            size_hint_y: None
+                            height: dp(1)
+                            padding: [dp(20), 0]
+                            canvas.after:
+                                Color:
+                                    rgba: COLOR_BORDER
+                                Rectangle:
+                                    pos: self.x + dp(20), self.y
+                                    size: self.width - dp(40), self.height
+                        Label:
+                            text: "Ce modèle utilise une architecture profonde basée sur des 'blocs résiduels' pour des détails très complexes."
+                            color: COLOR_TEXT_SECONDARY
+                            font_size: '11sp'
+                            text_size: self.width * 0.9, None
+                            halign: 'center'
+                            valign: 'middle'
+                            size_hint_y: 0.4
 
         PrimaryButton:
             text: 'Lancer la Super Résolution'
             on_release: root.on_process_button_press()
-            disabled: not root.selected_path
+            disabled: not root.selected_path or not root.selected_model
             size_hint_x: 0.9
             pos_hint: {'center_x': 0.5}
+            size_hint_y: None
+            height: dp(55)

@@ -1,3 +1,6 @@
+#:import os os
+#:import utils kivy.utils
+
 <ResultScreen>:
     canvas.before:
         Color:
@@ -31,18 +34,20 @@
             anchor_y: 'bottom'
             padding: 20
 
-            Button:
-                text: "Téléchargé !" if root.download_complete else "Télécharger"
+            PrimaryButton:
+                id: download_button
+                markup: True
+                text: u"[font=MaterialIcons]\uf091[/font]  Téléchargé !" if root.download_complete else u"[font=MaterialIcons]\uf090[/font]  Télécharger"
                 disabled: root.download_complete
                 on_release: root.download_image()
-                size_hint: 0.9, None
-                height: 55
-                font_size: '18sp'
-                color: COLOR_TEXT
-                background_color: [0,0,0,0]
+                size_hint_x: 0.9
+                pos_hint: {'center_x': 0.5}
+                size_hint_y: None
+                height: dp(55)
+
                 canvas.before:
                     Color:
-                        rgba: COLOR_SUCCESS if root.download_complete else (COLOR_ACCENT if self.state == 'normal' else COLOR_ACCENT_DOWN)
+                        rgba: COLOR_SUCCESS if root.download_complete else (COLOR_BUTTON_BG if self.state == 'normal' else COLOR_BUTTON_DOWN)
                     RoundedRectangle:
                         size: self.size
                         pos: self.pos
