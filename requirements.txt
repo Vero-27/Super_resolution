@@ -10,3 +10,8 @@ pywin32~=311
 urllib3~=2.5.0
 idna~=3.11
 charset-normalizer~=3.4.3
+torch
+torchvision
+pillow
+opencv-python
+numpy
