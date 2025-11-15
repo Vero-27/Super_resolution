@@ -10,7 +10,6 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivy.core.text import LabelBase
 
-
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS

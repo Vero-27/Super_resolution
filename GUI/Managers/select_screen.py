@@ -58,12 +58,18 @@ class SelectScreen(Screen):
             print(f"Erreur : chemin de fichier non valide : {selected_path}")
 
     def on_process_button_press(self):
-        if self.selected_path and os.path.exists(self.selected_path) and self.selected_model:
+        path_is_valid = False
+        if platform == 'android' and self.selected_path:
+            path_is_valid = True
+        elif os.path.exists(self.selected_path):
+            path_is_valid = True
+
+        if path_is_valid and self.selected_model:
             if not self.processing_function:
                 print("Erreur critique : La fonction de traitement n'a pas été fournie.")
                 return
 
-            output_image_path = self.processing_function(self.selected_path)
+            output_image_path = self.processing_function(self.selected_path, self.selected_model)
 
             result_screen = self.manager.get_screen('result')
             result_screen.input_image_path = self.selected_path
@@ -71,7 +77,7 @@ class SelectScreen(Screen):
 
             self.manager.current = 'result'
         else:
-            if not self.selected_path:
+            if not path_is_valid:
                 print("Veuillez sélectionner une image valide d'abord.")
             elif not self.selected_model:
                 print("Veuillez sélectionner un modèle d'IA d'abord.")

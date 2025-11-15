@@ -142,3 +142,15 @@ def run_super_resolution_edsr_lite(input_path: str) -> str:
 
     return output_path
 
+def run_super_resolution(input_path: str, model_name: str) -> str:
+    if model_name == 'ESPCN':
+        return run_super_resolution_espcn(input_path)
+    elif model_name == 'SRCNN':
+        return run_super_resolution_srcnn(input_path)
+    elif model_name == 'EDSR':
+        return run_super_resolution_edsr_lite(input_path)
+    else:
+        print(f"Modèle inconnu : {model_name}. Copie simple.")
+        output_path = _create_temp_output_path(input_path, "_raw_copy")
+        copyfile(input_path, output_path)
+        return output_path

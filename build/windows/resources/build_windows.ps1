@@ -26,19 +26,38 @@ New-Item -ItemType Directory -Path $CACHE_DIR, $OUTPUT_DIR, $TEMP_DIR -Force | O
 
 $pythonExe = Join-Path $PYTHON_DIR "python.exe"
 $pipExe = Join-Path $PYTHON_DIR "Scripts\pip.exe"
+$sitePackagesPath = Join-Path $PYTHON_DIR "Lib\site-packages"
 
 if (-not (Test-Path $pythonExe)) {
-    $pythonZip = Join-Path $CACHE_DIR "python.zip"
-    $pythonEmbedUrl = "https://www.python.org/ftp/python/$PYTHON_VERSION/python-$PYTHON_VERSION-embed-amd64.zip"
+
+    $pythonInstaller = Join-Path $CACHE_DIR "python-installer.exe"
+    $pythonInstallerUrl = "https://www.python.org/ftp/python/$PYTHON_VERSION/python-$PYTHON_VERSION-amd64.exe"
+
     try {
-        Invoke-WebRequest -Uri $pythonEmbedUrl -OutFile $pythonZip -UseBasicParsing
-        Expand-Archive -Path $pythonZip -DestinationPath $PYTHON_DIR -Force
-        Remove-Item $pythonZip
-        $pthFile = Get-ChildItem -Path $PYTHON_DIR -Filter "*._pth" | Select-Object -First 1
-        if ($pthFile) { (Get-Content $pthFile.FullName) -replace '#import site', 'import site' | Set-Content $pthFile.FullName }
-        Invoke-WebRequest -Uri "https://bootstrap.pypa.io/get-pip.py" -OutFile (Join-Path $CACHE_DIR "get-pip.py") -UseBasicParsing
-        & $pythonExe (Join-Path $CACHE_DIR "get-pip.py") --no-warn-script-location | Out-Null
+        Write-Host "Téléchargement du programme d'installation complet de Python..."
+        Invoke-WebRequest -Uri $pythonInstallerUrl -OutFile $pythonInstaller -UseBasicParsing
+
+        Write-Host "Installation de Python dans $PYTHON_DIR (cela peut prendre un moment)..."
+        $installArgs = @(
+            "/quiet",
+            "InstallAllUsers=0",
+            "TargetDir=""$PYTHON_DIR""",
+            "PrependPath=0",
+            "Include_pip=1",
+            "Include_tcltk=0",
+            "Include_test=0",
+            "Include_dev=0"
+        )
+
+        $process = Start-Process -FilePath $pythonInstaller -ArgumentList $installArgs -Wait -PassThru
+        if ($process.ExitCode -ne 0) {
+            Write-Error "L'installation de Python a échoué avec le code $($process.ExitCode)"
+            exit 1
+        }
+
+        Remove-Item $pythonInstaller
     } catch {
+        Write-Error "Échec du téléchargement ou de l'installation de Python : $_"
         exit 1
     }
 }
@@ -46,8 +65,18 @@ if (-not (Test-Path $pythonExe)) {
 $requirementsHashFile = Join-Path $CACHE_DIR "requirements.hash"
 $currentHash = (Get-FileHash -Path $REQUIREMENTS -Algorithm MD5).Hash
 if (-not ((Test-Path $requirementsHashFile) -and ((Get-Content $requirementsHashFile) -eq $currentHash))) {
+
     & $pipExe install --upgrade pip -q
-    & $pipExe install -r $REQUIREMENTS -q
+    & $pipExe install pyinstaller-hooks-contrib -q
+
+    $tempRequirements = Join-Path $TEMP_DIR "temp_requirements.txt"
+    Get-Content $REQUIREMENTS | Where-Object { $_ -notmatch '^(torch|torchvision)$' } | Set-Content $tempRequirements
+
+    & $pipExe install -r $tempRequirements -q
+
+    Write-Host "Installation de la version CPU de Torch et Torchvision..."
+    & $pipExe install torch torchvision --index-url https://download.pytorch.org/whl/cpu -q
+
     & $pipExe install pyinstaller -q
     Set-Content -Path $requirementsHashFile -Value $currentHash
 }
@@ -62,19 +91,26 @@ $buildArgs = @(
     "--name=$APP_NAME",
     "--distpath=$OUTPUT_DIR",
     "--workpath=$TEMP_DIR",
-    "--hidden-import=plyer.platforms.win.filechooser"
+    "--paths", $sitePackagesPath,
+    "--hidden-import=plyer.platforms.win.filechooser",
+    "--hidden-import=Core.models.espcn",
+    "--hidden-import=Core.models.srcnn",
+    "--hidden-import=Core.models.edsr_lite",
+    "--collect-all", "torch",
+    "--collect-all", "torchvision",
+    "--collect-all", "cv2",
+    "--collect-all", "numpy",
+    "--collect-all", "PIL"
 )
 
-$excluded_dirs = @('build', 'output', 'dist', 'venv', '.git', '.idea', '.vscode', '__pycache__', '.buildozer', 'bin')
-Get-ChildItem -Path $PROJECT_ROOT -Directory | ForEach-Object {
-    if ($_.Name.ToLower() -notin $excluded_dirs) {
-        $buildArgs += "--add-data", "$($_.Name);$($_.Name)"
-    }
-}
+$buildArgs += "--add-data", "GUI;GUI"
+$buildArgs += "--add-data", "fonts;fonts"
+$buildArgs += "--add-data", "Core/checkpoints;Core/checkpoints"
 
 $pyinstallerExe = Join-Path $PYTHON_DIR "Scripts\pyinstaller.exe"
 
 try {
+    Write-Host "--- Lancement de PyInstaller (ça va être long à cause de torch) ---"
     $process = Start-Process -FilePath $pyinstallerExe -ArgumentList $buildArgs -WorkingDirectory $PROJECT_ROOT -NoNewWindow -Wait -PassThru
 } catch {
     exit 1
