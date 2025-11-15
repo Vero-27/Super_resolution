@@ -1,0 +1,10 @@
+/venv
+/build/windows/resources/cache/
+/build/android/resources/.buildozer_cache
+.buildozer
+bin
+venv
+Super_resolution.spec
+dist
+Out
+.idea

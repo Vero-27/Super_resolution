@@ -1,14 +1,42 @@
 #:import utils kivy.utils
 
-#:set COLOR_BACKGROUND utils.get_color_from_hex('#0D1B2A')
-#:set COLOR_FRAME_BG utils.get_color_from_hex('#1B263B')
-#:set COLOR_WIDGET_BG utils.get_color_from_hex('#2A394E')
-#:set COLOR_ACCENT utils.get_color_from_hex('#3A96DD')
-#:set COLOR_ACCENT_DOWN utils.get_color_from_hex('#2F78B1')
-#:set COLOR_TEXT utils.get_color_from_hex('#E0E1DD')
+#:set COLOR_BACKGROUND utils.get_color_from_hex('#0A0F1A')
+#:set COLOR_FRAME_BG utils.get_color_from_hex('#1C202E')
+#:set COLOR_WIDGET_BG utils.get_color_from_hex('#FFFFFF')
+#:set COLOR_ACCENT utils.get_color_from_hex('#00FFFF')
+#:set COLOR_ACCENT_DOWN utils.get_color_from_hex('#00CDCD')
+#:set COLOR_TEXT utils.get_color_from_hex('#FFFFFF')
 #:set COLOR_TEXT_SECONDARY utils.get_color_from_hex('#A9B4C2')
+#:set COLOR_BORDER utils.get_color_from_hex('#00FFFF33')
 #:set COLOR_SUCCESS utils.get_color_from_hex('#3C9D7C')
-#:set COLOR_BORDER utils.get_color_from_hex('#3A96DD55')
+#:set COLOR_BUTTON_BG utils.get_color_from_hex('#3A96DD')
+#:set COLOR_BUTTON_DOWN utils.get_color_from_hex('#2F78B1')
+#:set COLOR_TEXT_DARK utils.get_color_from_hex('#0A0F1A')
+#:set COLOR_TEXT_DARK_SECONDARY utils.get_color_from_hex('#555555')
+
+
+<SelectionCard@ButtonBehavior+BoxLayout>:
+    model_name: ''
+    is_selected: False
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(260)
+    padding: 15
+    spacing: 10
+    on_release: pass
+
+    canvas.before:
+        Color:
+            rgba: COLOR_FRAME_BG
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [15,]
+        Color:
+            rgba: COLOR_ACCENT if root.is_selected else [0, 0, 0, 0]
+        Line:
+            rounded_rectangle: (self.x, self.y, self.width, self.height, 15)
+            width: dp(1.5)
 
 
 <Card@BoxLayout>:
@@ -48,7 +76,7 @@
     height: 55
     canvas.before:
         Color:
-            rgba: COLOR_ACCENT if self.state == 'normal' else COLOR_ACCENT_DOWN
+            rgba: COLOR_BUTTON_BG if self.state == 'normal' else COLOR_BUTTON_DOWN
         RoundedRectangle:
             size: self.size
             pos: self.pos
@@ -65,13 +93,13 @@
 
 <SecondaryButton@Button>:
     font_size: '18sp'
-    color: COLOR_TEXT
+    color: COLOR_TEXT_DARK
     background_color: [0, 0, 0, 0]
     size_hint_y: None
     height: 55
     canvas.before:
         Color:
-            rgba: COLOR_WIDGET_BG if self.state == 'normal' else COLOR_FRAME_BG
+            rgba: COLOR_WIDGET_BG if self.state == 'normal' else COLOR_TEXT_SECONDARY
         RoundedRectangle:
             size: self.size
             pos: self.pos
@@ -82,15 +110,8 @@
     spacing: 15
     canvas.before:
         Color:
-            rgba: COLOR_WIDGET_BG if self.state == 'normal' else COLOR_FRAME_BG
+            rgba: COLOR_WIDGET_BG
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [15,]
-        Color:
-            rgba: COLOR_BORDER
-        Line:
-            rounded_rectangle: (self.x, self.y, self.width, self.height, 15)
-            width: 1.5
-            dash_length: 10
-            dash_offset: 10
